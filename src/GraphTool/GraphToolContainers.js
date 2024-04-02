@@ -60,8 +60,8 @@ function initGraphContainers (container) {
     // Todo: the following should go to vue.js templates
 
     // ----------Bootstrap class for File-Dropdown
-    const dropdownContainer = document.createElement('div')
-    dropdownContainer.classList.add('dropdown')
+    const fileDropdownContainer = document.createElement('div')
+    fileDropdownContainer.classList.add('dropdown')
 
     this.file_dropdown_button = document.createElement('button')
     this.file_dropdown_button.setAttribute('type', 'button')
@@ -70,7 +70,7 @@ function initGraphContainers (container) {
     this.file_dropdown_button.setAttribute('data-bs-toggle', 'dropdown')
     this.file_dropdown_button.setAttribute('aria-expanded', 'false')
     this.file_dropdown_button.innerHTML = "<i class='fa-solid fa-lg fa-file me-1'></i> File"
-    dropdownContainer.append(this.file_dropdown_button)
+    fileDropdownContainer.append(this.file_dropdown_button)
 
     const dropdownMenu = document.createElement('div')
     dropdownMenu.classList.add('dropdown-menu')
@@ -93,9 +93,9 @@ function initGraphContainers (container) {
     //saveItem.appendChild(saveButton)
     dropdownMenu.appendChild(saveButton)
 
-    dropdownContainer.appendChild(dropdownMenu)
+    fileDropdownContainer.appendChild(dropdownMenu)
 
-    this.tool_container.appendChild(dropdownContainer)
+    this.tool_container.appendChild(fileDropdownContainer)
 
     this.loadFunctionality(openButton)
     this.saveFunctionality(saveButton)
@@ -105,8 +105,8 @@ function initGraphContainers (container) {
       dropdownMenu.classList.toggle("show");
     })
 
-    const editContainer = document.createElement('div')
-    editContainer.classList.add('dropdown')
+    const editDropdownContainer = document.createElement('div')
+    editDropdownContainer.classList.add('dropdown')
 
     // -------Bootstrap for Edit-Dropdown
     const editButton = document.createElement('button')
@@ -117,7 +117,7 @@ function initGraphContainers (container) {
     editButton.setAttribute('aria-expanded', 'false')
     editButton.setAttribute('id', this.prefix + 'editButton')
     editButton.innerHTML = "<i class='fa-solid fa-lg fa-pen-to-square me-1'></i> Edit"
-    editContainer.append(editButton)
+    editDropdownContainer.append(editButton)
 
 
     const editDropdownMenu = document.createElement('div')
@@ -234,14 +234,24 @@ function initGraphContainers (container) {
     deleteItem.appendChild(deleteButton)
     editDropdownMenu.appendChild(deleteItem)
 
-    editContainer.appendChild(editDropdownMenu)
+    editDropdownContainer.appendChild(editDropdownMenu)
 
-    this.tool_container.appendChild(editContainer)
+    this.tool_container.appendChild(editDropdownContainer)
 
     // Create Coloring Container
-    const coloringContainer = document.createElement('div')
-    this.tool_container.append(coloringContainer)
-    this.colorPicker(this, coloringContainer)
+    const coloringDropdownContainer = document.createElement('div')
+    this.tool_container.append(coloringDropdownContainer)
+    this.colorPicker(this, coloringDropdownContainer)
+
+    const colorByPropertyButton = document.createElement('button')
+    colorByPropertyButton.setAttribute('class', 'dropdown-item')
+    colorByPropertyButton.setAttribute('type', 'button')
+    colorByPropertyButton.setAttribute('id', this.prefix + 'colorByPropertyButton')
+    colorByPropertyButton.style.color = 'red'
+    colorByPropertyButton.innerHTML = 'Color by Property'
+    colorByPropertyButton.addEventListener('click', () => {
+      console.log('to be implemented')
+            })
 
     // --------------- Create Search Wrapper
     const searchWrapper = document.createElement('fieldset')
@@ -326,6 +336,11 @@ function colorPicker (graph, container) {
     this.color_dropdown_menu.classList.add('dropdown-menu')
     this.color_dropdown_menu.setAttribute('aria-labelledby', 'dropdownMenuButton')
 
+    this.color_method_select.addEventListener('click', ()=>{
+      // toggle visibility of color_dropdown_menu
+      this.color_dropdown_menu.classList.toggle("show")
+    })
+
     //const colorPropertyItem = document.createElement('li')
     const colorPropertyButton = document.createElement('button')
     colorPropertyButton.setAttribute('class', 'dropdown-item')
@@ -378,6 +393,7 @@ function colorPicker (graph, container) {
       const usefulColors = ['orangered', 'red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'brown', 'gray']
       const usefulColors2 = ['limegreen', 'green', 'orange', 'yellow', 'red', 'blue', 'purple', 'pink', 'brown', 'gray']
 
+      console.log("this.start_color_select:", this.start_color_select)
       for (let i = 0; i < usefulColors.length; i++) {
         const option = document.createElement('option')
         option.value = usefulColors[i]
@@ -406,7 +422,7 @@ function colorPicker (graph, container) {
       this.set_path_button.setAttribute('class', 'btn btn-outline-primary btn-sm')
       this.set_path_button.id = prefix + 'set_path_button'
       this.set_path_button.innerHTML = 'Apply'
-      this.set_path_button.addEventListener('click', getPath)
+      this.set_path_button.addEventListener('click', getPath.bind(this))
 
       if (!this.setColorByValueInput) {
         this.dropdown_div.appendChild(this.setColorByValueInput)
@@ -422,7 +438,7 @@ function colorPicker (graph, container) {
       inputGroupDiv.appendChild(appendDiv)
 
       container.appendChild(inputGroupDiv)
-    })
+    }.bind(this))
     //colorValueItem.appendChild(this.color_value_button)
     this.color_dropdown_menu.appendChild(this.color_value_button)
 
@@ -446,7 +462,7 @@ function colorPicker (graph, container) {
     container.appendChild(this.dropdown_div)
 
     // Get the selected value
-    function getPath () {
+    function getPath() {
       const path = '' + this.setColorByValueInput.value
 
       const tempArray = path.split('.')
@@ -531,13 +547,12 @@ function initDeepSearch (container) {
   // container.appendChild(checkbox)
   inputGroupDiv.appendChild(this.show_deep_search_expanded)
 
+  const inputElem = this.search_input
   submitButton.addEventListener('click', () => {
+    console.log(this)
     this.searchExpands = []
-
-    const inputValue = this.search_input.value
-
-    const inputString = inputValue
-
+    const inputString = inputElem.value
+    console.log("callback von submitButton, inputString:", inputElem.value)
     this.searchFunctionality(this.dataFile, inputString)
   })
 

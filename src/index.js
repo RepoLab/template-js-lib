@@ -7,6 +7,7 @@ import "../node_modules/jsoneditor/dist/jsoneditor.css"
 import "../node_modules/tabulator-tables/dist/css/tabulator.css"
 import "../node_modules/bootstrap/dist/css/bootstrap.css"
 import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css"
+//import "../node_modules/vis-network/dist/dist/vis-network.css"   // seems not to be needed in browser, does not work in panel
 
 
 // let clicked = {};

@@ -9,7 +9,9 @@ with open("panel_javascript/create_example_conf.js", "r") as f:
 with open('node_modules/tabulator-tables/dist/css/tabulator.css', 'r') as f:
     tabulator_css = f.read()
 
-css_files = ["https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"]
+css_files = ["https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css",
+             "https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.9/dist/dist/vis-network.min.css"
+             ]
 pn.extension(css_files=css_files)
 
 class GraphToolPanel(pn.reactive.ReactiveHTML):
@@ -20,7 +22,7 @@ class GraphToolPanel(pn.reactive.ReactiveHTML):
     </header>
     <div id="mynetwork"></div>
     </div>
-    """### Actung! die id's aus dem Template werden beim Instanzieren verändert
+    """### Actung! die id's aus dem Template werden beim Instanzieren verändert. Elemente können aber in _scripts verwendet werden.
 
     _scripts = {
 
@@ -39,6 +41,7 @@ class GraphToolPanel(pn.reactive.ReactiveHTML):
     __javascript__ = [
         #"https://unpkg.com/vis-network/standalone/umd/vis-network.min.js",
         #'https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.10.0/jsoneditor.min.js', ##jsoneditor
+
         'dist/isg.umd.js',
         'panel_javascript/create_example_conf.js',
       #  'node_modules/bootstrap/dist/js/bootstrap.bundle.js',

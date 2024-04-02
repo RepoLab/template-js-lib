@@ -45,8 +45,9 @@ function editNode (data, cancelAction, callback, mainObject) {
     callback
   )
   // document.getElementById("node-popUp")
-  $('canvas').on('click', function (e) {
+  this.container.addEventListener('click', function (e) {
     if (newNodeActive === true) {
+      console.log("showing node popup")
       this.manipulation_popup_div.style.display = 'block'
 
       this.nodePopUp.style.top = e.pageY + "px"
@@ -71,7 +72,7 @@ function editEdgeWithoutDrag (data, callback, newThis) {
   )
   this.edgeCancelButton.onclick = this.cancelEdgeEdit.bind(this,callback)
 
-  $('canvas').on('click', function (e) {
+  this.container.addEventListener('click', function (e) {
     if (newEdgeActive === true) {
       this.manipulation_popup_div.style.display = 'block'
 
@@ -93,6 +94,7 @@ function saveEdgeData (data, callback) {
   console.log(this.dataFile.jsondata)
   // this.nodes.get(data.to).id = data.nodeID
   callback(data)
+  console.log('in saveEdgeData, data:', data)
   if (data !== null) {
     this.nodes.update(this.nodes.get(data.to))
   }
@@ -561,7 +563,7 @@ this.nodePopUp.appendChild(nodeButtonContainer);
   this.manipulation_popup_div.appendChild(this.edgePopUp);
 
   this.manipulation_popup_div.style.display = 'none'
-  document.body.appendChild(this.manipulation_popup_div)
+  this.container.appendChild(this.manipulation_popup_div)
   //this.container.appendChild(this.manipulation_popup_div)
 }
 
@@ -585,7 +587,8 @@ function saveNodeData (data, callback) {
   this.clearNodePopUp()
 
   console.log("in saveNodeData, data,callback: ",data,callback)
-  callback(data)
+  this.nodes.update(data)
+  //callback(data)  // does not work with panel
 
   this.options.manipulation.enabled = !this.options.manipulation.enabled
   this.options.manipulation.initiallyActive = !this.options.manipulation.initiallyActive
