@@ -1,7 +1,7 @@
 const G = require('../Graph/Graph.js')
 
 function searchFunctionality (data, searchValue) {
-  document.getElementById(this.prefix + 'search_input').value = ''
+  this.search_input.value = ''
 
   this.deepSearch(searchValue)
 }
@@ -13,7 +13,7 @@ function searchAlert () {
 
     if (result) {
       // alert("You clicked 'Yes'!");
-      document.getElementById(this.prefix + 'input-field').value = ''
+      this.search_input.value = ''
       this.deepSearchExpands = []
       this.deepSearchExpandsFull = []
       return true
@@ -91,7 +91,7 @@ function deepSearchExpandNodes (foundNode, fullGraph) {
 // collapses all nodes that were expanded during deep search
 function collapseSearch () {
   // if the checkbox is not checked, collapse all nodes that were expanded during deep search
-  if (!document.getElementById(this.prefix + 'myCheckbox').checked) {
+  if (!this.show_deep_search_expanded.checked) {
     // remove duplicates from the deep search expands array
     this.deepSearchExpandsFull = [...new Set(this.deepSearchExpandsFull)]
 
@@ -109,7 +109,7 @@ function collapseSearch () {
     this.deepSearchExpands = []
     this.deepSearchExpandsFull = []
     this.clicked = {}
-    document.getElementById(this.prefix + 'legendContainer').remove()
+    this.legend_container.remove()
     this.createLegend()
   }
 }
@@ -189,14 +189,14 @@ function deepSearch (searchValue) {
     // search for nodes with label containing search value
     let foundNodes = []
 
-    if (document.getElementById(this.prefix + 'search_select').value === 'search_node') {
+    if (this.search_select.value === 'search_node') {
       const lowercaseSearchValue = searchValue.toLowerCase()
       foundNodes = fullGraph.nodes.get().filter(node =>
         node.label.toLowerCase().includes(lowercaseSearchValue)
       )
     }
 
-    if (document.getElementById(this.prefix + 'search_select').value === 'search_edge') {
+    if (this.search_select.value === 'search_edge') {
       // search for edges with label containing search value
       let foundEdges = []
 
@@ -213,7 +213,7 @@ function deepSearch (searchValue) {
     if (foundNodes.length === 0) {
       this.collapseSearch()
       this.recolorByProperty()
-      if (document.getElementById(this.prefix + 'myCheckbox').checked) {
+      if (this.show_deep_search_expanded.checked) {
         this.setGraphColorsBlackAndWhite(this.nodes.get(), this.edges.get())
       }
       return

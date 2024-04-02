@@ -3,6 +3,12 @@ const Graph = require('./Graph/Graph.js')
 const GD = require('./GraphDrawer/GraphDrawer.js')
 const GT = require('./GraphTool/GraphTool.js')
 
+import "../node_modules/jsoneditor/dist/jsoneditor.css"
+import "../node_modules/tabulator-tables/dist/css/tabulator.css"
+import "../node_modules/bootstrap/dist/css/bootstrap.css"
+import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css"
+
+
 // let clicked = {};
 $(document).ready(function () {
 

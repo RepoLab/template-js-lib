@@ -1,8 +1,18 @@
 const JSONEditors = require('jsoneditor/dist/jsoneditor') // this is the multi-mode editor https://github.com/josdejong/jsoneditor
+const Tabulator = require('tabulator-tables/dist/js/tabulator')
 
-function showOptionsDefault (node, optionsDivId = 'optionsDiv') {
-  document.getElementById(optionsDivId).innerHTML = "<button id='" + this.prefix + "setButton'>set!</button><br><div id='" + this.prefix + "visual_options_editor_div'></div><div id='" + this.prefix + "data_editor_div'></div>"
-  const setButton = document.getElementById(this.prefix + 'setButton')
+function showOptionsDefault (node, optionsDiv = this.optionsDiv) {
+  
+
+  this.set_button = document.createElement("button")
+  this.set_button.id = this.prefix + "setButton"
+  this.set_button.innerHTML = "set!"
+  this.visual_options_editor_div = document.createElement("div")
+  this.visual_options_editor_div.id = this.prefix + "visual_options_editor_div"
+  this.data_editor_div = document.createElement("div")
+  this.data_editor_div.id = this.prefix + "data_editor_div"
+  optionsDiv.innerHTML = ""
+  optionsDiv.append(this.set_button, this.visual_options_editor_div, this.data_editor_div)
   const schema = {
     /*
                 "title": "Node Options",
@@ -56,7 +66,7 @@ function showOptionsDefault (node, optionsDivId = 'optionsDiv') {
     mode: 'tree',
     modes: ['code', 'tree'] // ['code', 'form', 'text', 'tree', 'view', 'preview']}
   }
-  const visualOptionsEditorDiv = document.getElementById(this.prefix + 'visual_options_editor_div')
+  const visualOptionsEditorDiv = this.visual_options_editor_div //document.getElementById(this.prefix + 'visual_options_editor_div')
   const visualOptionsEditor = new JSONEditors(visualOptionsEditorDiv, options)
   // make object of own properties
 
@@ -64,11 +74,11 @@ function showOptionsDefault (node, optionsDivId = 'optionsDiv') {
   visualOptionsEditor.onChange = (param) => {
 
   }
-  setButton.addEventListener('click', () => {
+  this.set_button.addEventListener('click', () => {
     node = visualOptionsEditor.get()
     this.nodes.update(node)
   })
-  const dataEditorDiv = document.getElementById(this.prefix + 'data_editor_div')
+  const dataEditorDiv = this.data_editor_div
   const dataEditor = new JSONEditors(dataEditorDiv, options)
 
   dataEditor.set(this.drawer.getValueFromPathArray(node.path))
@@ -89,7 +99,7 @@ function showSelectionOptions () {
       const optionsId = this.options_container.id
       node.showOptions(optionsId)
     } else {
-      this.showOptionsDefault(node, this.options_container.id)
+      this.showOptionsDefault(node, this.options_container)
     }
   } else {
     // show common properties
@@ -99,14 +109,14 @@ function showSelectionOptions () {
       // make options gui
 
       this.options_container.innerHTML = '<h3>comparison between nodes</h3>'
-      const comparisonContainer = document.createElement('div')
-      comparisonContainer.setAttribute('id', this.prefix + 'comparison_container')
-      this.options_container.append(comparisonContainer)
+      this.comparison_container = document.createElement('div')
+      this.comparison_container.setAttribute('id', this.prefix + 'comparison_container')
+      this.options_container.append(this.comparison_container)
       this.options_container.append(document.createElement('H2').appendChild(document.createTextNode('common types')))
 
-      const setForAllContainer = document.createElement('div')
-      setForAllContainer.setAttribute('id', this.prefix + 'setForAllContainer')
-      this.options_container.append(setForAllContainer)
+      this.set_for_all_container = document.createElement('div')
+      this.set_for_all_container.setAttribute('id', this.prefix + 'set_for_all_container')
+      this.options_container.append(this.set_for_all_container)
 
       // create table_data for comparison
 
@@ -169,7 +179,7 @@ function showSelectionOptions () {
         this.nodes.update(node)
       }
 
-      const tabul /* eslint-disable-line no-unused-vars */ = new Tabulator('#' + comparisonContainer.id, { // eslint-disable-line no-undef
+      const tabul /* eslint-disable-line no-unused-vars */ = new Tabulator(this.comparison_container, { // eslint-disable-line no-undef
         data: tableData,
         columns: [{
           title: 'id',
@@ -252,7 +262,7 @@ function showSelectionOptions () {
         }
       }
 
-      const setForAllTable /* eslint-disable-line no-unused-vars */ = new Tabulator('#' + setForAllContainer.id, { // eslint-disable-line no-undef
+      const setForAllTable /* eslint-disable-line no-unused-vars */ = new Tabulator(this.set_for_all_container, { // eslint-disable-line no-undef
         data: [tableData[0]],
         columns: [{
           title: 'id',

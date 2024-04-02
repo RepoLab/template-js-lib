@@ -1,7 +1,8 @@
-function initGraphContainers (divId) {
+function initGraphContainers (container) {
+  let divId = container.id
   if (this.handleCallbacks({ id: 'onBeforeInitGraphContainers', params: { graph: this, divId } })) {
     // create all necessary elements/divs and set them up
-    this.container = document.getElementById(divId)
+    this.container = container
     this.vis_container = document.createElement('div')
     this.vis_container.setAttribute('id', this.prefix + 'vis_container')
     // this.vis_container.width = "70%"
@@ -62,34 +63,35 @@ function initGraphContainers (divId) {
     const dropdownContainer = document.createElement('div')
     dropdownContainer.classList.add('dropdown')
 
-    const dropdownButton = document.createElement('button')
-    dropdownButton.setAttribute('type', 'button')
-    dropdownButton.setAttribute('class', 'btn btn-outline-secondary btn-sm dropdown-toggle')
-    dropdownButton.setAttribute('id', 'dropdownMenuButton')
-    dropdownButton.setAttribute('data-bs-toggle', 'dropdown')
-    dropdownButton.setAttribute('aria-expanded', 'false')
-    dropdownButton.innerHTML = "<i class='fa-solid fa-lg fa-file me-1'></i> File"
-    dropdownContainer.append(dropdownButton)
+    this.file_dropdown_button = document.createElement('button')
+    this.file_dropdown_button.setAttribute('type', 'button')
+    this.file_dropdown_button.setAttribute('class', 'btn btn-outline-secondary btn-sm dropdown-toggle')
+    this.file_dropdown_button.setAttribute('id', 'dropdownMenuButton')
+    this.file_dropdown_button.setAttribute('data-bs-toggle', 'dropdown')
+    this.file_dropdown_button.setAttribute('aria-expanded', 'false')
+    this.file_dropdown_button.innerHTML = "<i class='fa-solid fa-lg fa-file me-1'></i> File"
+    dropdownContainer.append(this.file_dropdown_button)
 
-    const dropdownMenu = document.createElement('ul')
+    const dropdownMenu = document.createElement('div')
     dropdownMenu.classList.add('dropdown-menu')
     dropdownMenu.setAttribute('aria-labelledby', 'dropdownMenuButton')
 
-    const openItem = document.createElement('li')
+    //const openItem = document.createElement('li')
     const openButton = document.createElement('button')
     openButton.setAttribute('class', 'dropdown-item')
     openButton.setAttribute('type', 'button')
     openButton.innerHTML = 'Open'
-    openItem.appendChild(openButton)
-    dropdownMenu.appendChild(openItem)
+    //openItem.appendChild(openButton)
+    //dropdownMenu.appendChild(openItem)
+    dropdownMenu.appendChild(openButton)
 
-    const saveItem = document.createElement('li')
+    //const saveItem = document.createElement('li')
     const saveButton = document.createElement('button')
     saveButton.setAttribute('class', 'dropdown-item')
     saveButton.setAttribute('type', 'button')
     saveButton.innerHTML = 'Save'
-    saveItem.appendChild(saveButton)
-    dropdownMenu.appendChild(saveItem)
+    //saveItem.appendChild(saveButton)
+    dropdownMenu.appendChild(saveButton)
 
     dropdownContainer.appendChild(dropdownMenu)
 
@@ -97,6 +99,11 @@ function initGraphContainers (divId) {
 
     this.loadFunctionality(openButton)
     this.saveFunctionality(saveButton)
+
+    this.file_dropdown_button.addEventListener('click', () => {
+      // toggle visibility of dropdown-menu
+      dropdownMenu.classList.toggle("show");
+    })
 
     const editContainer = document.createElement('div')
     editContainer.classList.add('dropdown')
@@ -112,25 +119,33 @@ function initGraphContainers (divId) {
     editButton.innerHTML = "<i class='fa-solid fa-lg fa-pen-to-square me-1'></i> Edit"
     editContainer.append(editButton)
 
-    const editDropdownMenu = document.createElement('ul')
+
+    const editDropdownMenu = document.createElement('div')
     editDropdownMenu.classList.add('dropdown-menu')
     editDropdownMenu.setAttribute('aria-labelledby', 'dropdownMenuButton')
 
-    const nodeItem = document.createElement('li')
-    const nodeButton = document.createElement('button')
-    nodeButton.setAttribute('class', 'dropdown-item')
-    nodeButton.setAttribute('type', 'button')
-    nodeButton.setAttribute('id', this.prefix + 'nodeButton')
+    //const nodeItem = document.createElement('li')
+    this.add_node_button = document.createElement('button')
+    this.add_node_button.setAttribute('class', 'dropdown-item')
+    this.add_node_button.setAttribute('type', 'button')
+    this.add_node_button.setAttribute('id', this.prefix + 'add_node_button')
 
-    nodeButton.innerHTML = 'Add Node'
-    nodeButton.addEventListener('click', () => {
+    editButton.addEventListener('click', () => {
+      // toggle visibility of edit-menu
+      editDropdownMenu.classList.toggle("show");
+    })
+
+    this.add_node_button.innerHTML = 'Add Node'
+    this.add_node_button.addEventListener('click', () => {
       this.options.manipulation.enabled = !this.options.manipulation.enabled
       this.options.manipulation.initiallyActive = !this.options.manipulation.initiallyActive
       this.network.setOptions(this.options)
+      console.log("options set:",this.options)
 
       this.network.addNodeMode()
-
+      console.log('in Add Node')
       for (let i = 0; i < document.getElementsByClassName('vis-button vis-back').length; i++) {
+        console.log("i = ", i)
         document.getElementsByClassName('vis-button vis-back')[i].addEventListener('pointerdown', () => {
           this.options.manipulation.enabled = !this.options.manipulation.enabled
           this.options.manipulation.initiallyActive = !this.options.manipulation.initiallyActive
@@ -144,12 +159,14 @@ function initGraphContainers (divId) {
       }
 
       if (this.options.manipulation.enabled) {
-        document.getElementById(this.prefix + 'vis_container').querySelector('.vis-close').style = 'display: none;'
+        this.vis_container.querySelector('.vis-close').style = 'display: none;'
+        //document.getElementById(this.prefix + 'vis_container').querySelector('.vis-close').style = 'display: none;'
       }
     })
 
-    nodeItem.appendChild(nodeButton)
-    editDropdownMenu.appendChild(nodeItem)
+    //nodeItem.appendChild(nodeButton)
+    //editDropdownMenu.appendChild(nodeItem)
+    editDropdownMenu.appendChild(this.add_node_button)
 
     const edgeItem = document.createElement('li')
     const edgeButton = document.createElement('button')
@@ -179,7 +196,7 @@ function initGraphContainers (divId) {
       }
 
       if (this.options.manipulation.enabled) {
-        document.getElementById(this.prefix + 'vis_container').querySelector('.vis-close').style = 'display: none;'
+        this.vis_container.querySelector('.vis-close').style = 'display: none;'
       }
     })
 
@@ -290,60 +307,70 @@ function colorPicker (graph, container) {
 
     var graph /* eslint-disable-line no-redeclare */ = graph // eslint-disable-line no-var
     const prefix = this.prefix
-    const dropdownDiv = document.createElement('div')
-    dropdownDiv.classList.add('dropdown')
-    dropdownDiv.id = this.prefix + 'dropdown'
-    dropdownDiv.setAttribute('id', this.prefix + 'myDropdown')
+    this.dropdown_div = document.createElement('div')
+    this.dropdown_div.classList.add('dropdown')
+    this.dropdown_div.id = this.prefix + 'dropdown'
+    this.dropdown_div.setAttribute('id', this.prefix + 'dropdown_div')
 
-    const dropdown = document.createElement('button')
-    dropdown.setAttribute('type', 'button')
-    dropdown.setAttribute('class', 'btn btn-outline-secondary btn-sm mb-1 dropdown-toggle')
-    dropdown.setAttribute('id', 'dropdownMenuButton')
-    dropdown.setAttribute('data-bs-toggle', 'dropdown')
-    dropdown.setAttribute('aria-expanded', 'false')
-    dropdown.innerHTML = "<i class='fa-solid fa-lg fa-droplet me-1'></i> Coloring"
-    dropdownDiv.append(dropdown)
+    this.color_method_select = document.createElement('button')
+    this.color_method_select.setAttribute('type', 'button')
+    this.color_method_select.setAttribute('class', 'btn btn-outline-secondary btn-sm mb-1 dropdown-toggle')
+    this.color_method_select.setAttribute('id', 'dropdown_menu_button')
+    this.color_method_select.setAttribute('data-bs-toggle', 'dropdown')
+    this.color_method_select.setAttribute('aria-expanded', 'false')
+    this.color_method_select.innerHTML = "<i class='fa-solid fa-lg fa-droplet me-1'></i> Coloring"
 
-    const colorDropdownMenu = document.createElement('ul')
-    colorDropdownMenu.classList.add('dropdown-menu')
-    colorDropdownMenu.setAttribute('aria-labelledby', 'dropdownMenuButton')
+    this.dropdown_div.append(this.color_method_select)
 
-    const colorPropertyItem = document.createElement('li')
+    this.color_dropdown_menu = document.createElement('div')
+    this.color_dropdown_menu.classList.add('dropdown-menu')
+    this.color_dropdown_menu.setAttribute('aria-labelledby', 'dropdownMenuButton')
+
+    //const colorPropertyItem = document.createElement('li')
     const colorPropertyButton = document.createElement('button')
     colorPropertyButton.setAttribute('class', 'dropdown-item')
     colorPropertyButton.setAttribute('type', 'button')
     colorPropertyButton.innerHTML = 'By Property'
     colorPropertyButton.setAttribute('value', 'setColorByProperty')
     colorPropertyButton.addEventListener('click', function () {
-      if (document.getElementById(prefix + 'setColorByValueInput')) {
-        document.getElementById(prefix + 'setColorByValueInput').remove()
-        document.getElementById(prefix + 'startColor').remove()
-        document.getElementById(prefix + 'endColor').remove()
-        document.getElementById(prefix + 'setPath').remove()
+      if (this.setColorByValueInput) {
+        this.setColorByValueInput.remove()
+        this.start_color_select.remove()
+        this.end_color_select.remove()
+        this.set_path_button.remove()
       }
       graph.recolorByProperty()
       graph.nodes.update(graph.nodes.get())
       graph.edges.update(graph.edges.get())
     })
-    colorPropertyItem.appendChild(colorPropertyButton)
-    colorDropdownMenu.appendChild(colorPropertyItem)
+    //colorPropertyItem.appendChild(colorPropertyButton)
+    //this.color_dropdown_menu.appendChild(colorPropertyItem)
+    this.color_dropdown_menu.appendChild(colorPropertyButton)
 
-    const colorValueItem = document.createElement('li')
-    const colorValueButton = document.createElement('button')
-    colorValueButton.setAttribute('class', 'dropdown-item')
-    colorValueButton.setAttribute('type', 'button')
-    colorValueButton.innerHTML = 'By Value'
-    colorValueButton.setAttribute('value', 'setColorByValue')
-    colorValueButton.addEventListener('click', function () {
+    this.start_color_select = document.createElement('select')
+    this.start_color_select.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'dropdown-toggle')
+    this.start_color_select.setAttribute('data-toggle', 'dropdown')
+    this.start_color_select.setAttribute('aria-haspopup', 'true')
+    this.start_color_select.setAttribute('aria-expanded', 'false')
+    this.start_color_select.style = 'border-top-right-radius: 0; border-bottom-right-radius: 0;'
+    this.start_color_select.id = prefix + 'start_color_select'
+
+    //const colorValueItem = document.createElement('li')
+    this.color_value_button = document.createElement('button')
+    this.color_value_button.setAttribute('class', 'dropdown-item')
+    this.color_value_button.setAttribute('type', 'button')
+    this.color_value_button.innerHTML = 'By Value'
+    this.color_value_button.setAttribute('value', 'setColorByValue')
+    this.color_value_button.addEventListener('click', function () {
       const inputGroupDiv = document.createElement('div')
       inputGroupDiv.classList.add('input-group', 'input-group-sm')
-      const input = document.createElement('input')
-      input.setAttribute('type', 'text')
-      input.classList.add('form-control')
-      input.setAttribute('placeholder', 'e.g. HasBudget.value')
-      input.setAttribute('aria-label', 'Color by Value')
-      input.setAttribute('aria-describedby', 'basic-addon2')
-      input.id = prefix + 'setColorByValueInput'
+      this.setColorByValueInput = document.createElement('input')
+      this.setColorByValueInput.setAttribute('type', 'text')
+      this.setColorByValueInput.classList.add('form-control')
+      this.setColorByValueInput.setAttribute('placeholder', 'e.g. HasBudget.value')
+      this.setColorByValueInput.setAttribute('aria-label', 'Color by Value')
+      this.setColorByValueInput.setAttribute('aria-describedby', 'basic-addon2')
+      this.setColorByValueInput.id = prefix + 'setColorByValueInput'
 
       const appendDiv = document.createElement('div')
       appendDiv.classList.add('input-group-append')
@@ -351,61 +378,53 @@ function colorPicker (graph, container) {
       const usefulColors = ['orangered', 'red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'brown', 'gray']
       const usefulColors2 = ['limegreen', 'green', 'orange', 'yellow', 'red', 'blue', 'purple', 'pink', 'brown', 'gray']
 
-      const select = document.createElement('select')
-      select.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'dropdown-toggle')
-      select.setAttribute('data-toggle', 'dropdown')
-      select.setAttribute('aria-haspopup', 'true')
-      select.setAttribute('aria-expanded', 'false')
-      select.style = 'border-top-right-radius: 0; border-bottom-right-radius: 0;'
-
       for (let i = 0; i < usefulColors.length; i++) {
         const option = document.createElement('option')
         option.value = usefulColors[i]
         option.text = usefulColors[i]
-        select.appendChild(option)
+        this.start_color_select.appendChild(option)
       }
-      select.id = prefix + 'startColor'
+      
 
-      const select2 = document.createElement('select')
-      select2.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'dropdown-toggle')
-      select2.setAttribute('data-toggle', 'dropdown')
-      select2.setAttribute('aria-haspopup', 'true')
-      select2.setAttribute('aria-expanded', 'false')
-      select2.style = 'border-top-left-radius: 0; border-bottom-left-radius: 0; margin-right: 0.5rem'
+      this.end_color_select = document.createElement('select')
+      this.end_color_select.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'dropdown-toggle')
+      this.end_color_select.setAttribute('data-toggle', 'dropdown')
+      this.end_color_select.setAttribute('aria-haspopup', 'true')
+      this.end_color_select.setAttribute('aria-expanded', 'false')
+      this.end_color_select.style = 'border-top-left-radius: 0; border-bottom-left-radius: 0; margin-right: 0.5rem'
 
       // Add options to the select element
       for (let i = 0; i < usefulColors2.length; i++) {
         const option = document.createElement('option')
         option.value = usefulColors2[i]
         option.text = usefulColors2[i]
-        select2.appendChild(option)
+        this.end_color_select.appendChild(option)
       }
-      select2.id = prefix + 'endColor'
+      this.end_color_select.id = prefix + 'end_color_select'
 
-      const button = document.createElement('button')
-      button.setAttribute('class', 'btn btn-outline-primary btn-sm')
-      button.id = prefix + 'setPath'
-      button.innerHTML = 'Apply'
-      button.addEventListener('click', getPath)
+      this.set_path_button = document.createElement('button')
+      this.set_path_button.setAttribute('class', 'btn btn-outline-primary btn-sm')
+      this.set_path_button.id = prefix + 'set_path_button'
+      this.set_path_button.innerHTML = 'Apply'
+      this.set_path_button.addEventListener('click', getPath)
 
-      if (!document.getElementById(this.prefix + 'setColorByValueInput')) {
-        document.getElementById(prefix + 'myDropdown').appendChild(input)
-        document.getElementById(prefix + 'myDropdown').appendChild(select)
-        document.getElementById(prefix + 'myDropdown').appendChild(select2)
-        document.getElementById(prefix + 'myDropdown').appendChild(button)
+      if (!this.setColorByValueInput) {
+        this.dropdown_div.appendChild(this.setColorByValueInput)
+        this.dropdown_div.appendChild(this.start_color_select)
+        this.dropdown_div.appendChild(this.end_color_select)
+        this.dropdown_div.appendChild(this.set_path_button)
       }
 
-      // inputGroupDiv.appendChild(dropdownDiv)
-      inputGroupDiv.appendChild(input)
-      appendDiv.appendChild(select)
-      appendDiv.appendChild(select2)
-      appendDiv.appendChild(button)
+      inputGroupDiv.appendChild(this.setColorByValueInput)
+      appendDiv.appendChild(this.start_color_select)
+      appendDiv.appendChild(this.end_color_select)
+      appendDiv.appendChild(this.set_path_button)
       inputGroupDiv.appendChild(appendDiv)
 
       container.appendChild(inputGroupDiv)
     })
-    colorValueItem.appendChild(colorValueButton)
-    colorDropdownMenu.appendChild(colorValueItem)
+    //colorValueItem.appendChild(this.color_value_button)
+    this.color_dropdown_menu.appendChild(this.color_value_button)
 
     // ---------------- Working Code ---------------------
 
@@ -423,17 +442,17 @@ function colorPicker (graph, container) {
     // --------------------- End ---------------
 
     // Add the dropdown menu to the container
-    dropdownDiv.appendChild(colorDropdownMenu)
-    container.appendChild(dropdownDiv)
+    this.dropdown_div.appendChild(this.color_dropdown_menu)
+    container.appendChild(this.dropdown_div)
 
     // Get the selected value
     function getPath () {
-      const path = '' + document.querySelector('#' + prefix + 'setColorByValueInput').value
+      const path = '' + this.setColorByValueInput.value
 
       const tempArray = path.split('.')
 
-      const startColor = document.querySelector('#' + prefix + 'startColor').value
-      const endColor = document.querySelector('#' + prefix + 'endColor').value
+      const startColor = this.start_color_select.value
+      const endColor = this.end_color_select.value
 
       graph.colorByValue(tempArray, graph.nodes.get(), graph.edges.get(), startColor, endColor)
 
@@ -455,13 +474,13 @@ function initDeepSearch (container) {
   const inputGroupDiv = document.createElement('div')
   inputGroupDiv.classList.add('input-group', 'input-group-sm')
 
-  const inputField = document.createElement('input')
-  inputField.setAttribute('type', 'text')
-  inputField.classList.add('form-control')
-  inputField.setAttribute('placeholder', 'Search Backend')
-  inputField.setAttribute('aria-label', 'Deep Search')
-  inputField.setAttribute('aria-describedby', 'basic-addon2')
-  inputField.id = this.prefix + 'input-field'
+  this.search_input = document.createElement('input')
+  this.search_input.setAttribute('type', 'text')
+  this.search_input.classList.add('form-control')
+  this.search_input.setAttribute('placeholder', 'Search Backend')
+  this.search_input.setAttribute('aria-label', 'Deep Search')
+  this.search_input.setAttribute('aria-describedby', 'basic-addon2')
+  this.search_input.id = this.prefix + 'input-field'
 
   const appendDiv = document.createElement('div')
   appendDiv.classList.add('input-group-append')
@@ -474,13 +493,12 @@ function initDeepSearch (container) {
   submitButton.style = 'margin-right: 4px'
   // submitButton.title = 'tbd'
 
-  inputGroupDiv.appendChild(inputField)
+  inputGroupDiv.appendChild(this.search_input)
   appendDiv.appendChild(submitButton)
   inputGroupDiv.appendChild(appendDiv)
 
   container.appendChild(inputGroupDiv)
 
-  inputField.id = this.prefix + 'input-field'
 
   // ----------------Working Code
 
@@ -504,19 +522,19 @@ function initDeepSearch (container) {
 
   // this.deepSearch("");
 
-  const checkbox = document.createElement('input')
-  checkbox.type = 'checkbox'
+  this.show_deep_search_expanded = document.createElement('input')
+  this.show_deep_search_expanded.type = 'checkbox'
   // checkbox.title = 'tbd - e.g. Show nodes that were expanded during Deep Search'
 
   // Optionally set additional properties for the checkbox
-  checkbox.id = this.prefix + 'myCheckbox'
+  this.show_deep_search_expanded.id = this.prefix + 'show_deep_search_expanded'
   // container.appendChild(checkbox)
-  inputGroupDiv.appendChild(checkbox)
+  inputGroupDiv.appendChild(this.show_deep_search_expanded)
 
   submitButton.addEventListener('click', () => {
     this.searchExpands = []
 
-    const inputValue = inputField.value
+    const inputValue = this.search_input.value
 
     const inputString = inputValue
 

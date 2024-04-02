@@ -37,7 +37,8 @@ function repeatInvisibility (options) {
 
 // sets the color of the legend white if the group is set to hidden = true
 function setInvisibleLegendGroupsWhite (invisibleGroups) {
-  const legend = document.getElementById(this.prefix + 'legendContainer')
+  const legend = this.legend_container //document.getElementById(this.prefix + 'legendContainer')
+  console.log(legend)
   const children = Array.from(legend.children)
 
   children.forEach((child) => {
@@ -83,19 +84,19 @@ function createLegend () {
 
     // }
 
-    if (document.getElementById(this.prefix + 'legendContainer')) {
+    if (this.legend_container) {
       invisibleGroups = this.legendInvisibleGroups(this.options)
 
-      document.getElementById(this.prefix + 'legendContainer').remove()
+      this.legend_container.remove()
     }
-    const legendDiv = document.createElement('div')
-    const visCont = document.getElementById(this.prefix + 'vis_container')
-    visCont.append(legendDiv)
-    legendDiv.style.width = '100%'
-    legendDiv.style.position = 'relative'
-    legendDiv.style.display = 'inline-block'
-    legendDiv.style = 'padding: 8px 0;'
-    legendDiv.id = this.prefix + 'legendContainer'
+    this.legend_container = document.createElement('div')
+     //document.getElementById(this.prefix + 'vis_container')
+    this.vis_container.append(this.legend_container)
+    this.legend_container.style.width = '100%'
+    this.legend_container.style.position = 'relative'
+    this.legend_container.style.display = 'inline-block'
+    this.legend_container.style = 'padding: 8px 0;'
+    this.legend_container.id = this.prefix + 'legendContainer'
     const legendColors = this.drawer.colorObj
     const legendSet = {}
 
@@ -123,7 +124,7 @@ function createLegend () {
         // propertyContainer.padding = '5px 5px 5px 5px';
         propertyName.addEventListener('click', (e) => this.legendFunctionality(e))
         propertyColor.addEventListener('click', (e) => this.legendFunctionality(e))
-        legendDiv.append(propertyContainer)
+        this.legend_container.append(propertyContainer)
         propertyContainer.append(propertyColor)
         propertyContainer.append(propertyName)
 

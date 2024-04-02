@@ -96,16 +96,15 @@ function createSearchUI (container) {
 
     // ----------Bootstrap select button
 
-    const selectElement = document.createElement('select')
-    selectElement.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'dropdown-toggle')
-    selectElement.setAttribute('data-toggle', 'dropdown')
-    selectElement.setAttribute('aria-haspopup', 'true')
-    selectElement.setAttribute('aria-expanded', 'false')
-    selectElement.id = this.prefix + 'search_select'
-    selectElement.addEventListener('change', (event) => {
+    this.search_select = document.createElement('select')
+    this.search_select.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'dropdown-toggle')
+    this.search_select.setAttribute('data-toggle', 'dropdown')
+    this.search_select.setAttribute('aria-haspopup', 'true')
+    this.search_select.setAttribute('aria-expanded', 'false')
+    this.search_select.id = this.prefix + 'search_select'
+    this.search_select.addEventListener('change', (event) => {
       // get the selected value
-      document.getElementById(this.prefix + 'search_input').value = ''
-      document.getElementById(this.prefix + 'input-field').value = ''
+      this.search_input.value = ''
       this.collapseSearch()
       this.recolorByProperty()
       // this.searchNodes("");
@@ -123,12 +122,12 @@ function createSearchUI (container) {
       const optionItem = document.createElement('option')
       optionItem.text = item.text
       optionItem.value = item.value
-      selectElement.add(optionItem)
+      this.search_select.add(optionItem)
     })
 
     inputGroupDiv.appendChild(inputField)
-    selectElement.appendChild(dropdownMenu)
-    appendDiv.appendChild(selectElement)
+    this.search_select.appendChild(dropdownMenu)
+    appendDiv.appendChild(this.search_select)
     inputGroupDiv.appendChild(appendDiv)
 
     container.appendChild(inputGroupDiv)
@@ -189,7 +188,7 @@ function searchNodes (searchString) {
     this.deepSearchExpands = []
 
     // searches for edges with the given search string
-    if (document.getElementById(this.prefix + 'search_select').value === 'search_edge') {
+    if (this.search_select.value === 'search_edge') {
       this.edges.forEach((edge) => {
         if (edge.label.toLowerCase().includes(searchString.toLowerCase())) {
           // gets all paths from root to the node that the edge points to
@@ -215,7 +214,7 @@ function searchNodes (searchString) {
       })
     }
     // searches for nodes with the given search string
-    if (document.getElementById(this.prefix + 'search_select').value === 'search_node') {
+    if (this.search_select.value === 'search_node') {
       this.nodes.forEach((node) => {
         if (node.label) {
           if (node.label.toLowerCase().includes(searchString.toLowerCase()) || node.group === 'root') {

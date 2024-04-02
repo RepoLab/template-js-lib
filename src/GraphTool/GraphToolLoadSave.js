@@ -1,3 +1,5 @@
+const G = require('../Graph/Graph.js')
+
 // loads or saves the graph to a .txt file
 function loadFunctionality (element) {
   // Todo: replace global ids with prefixed ids or class members to allow multiple instances on one page
@@ -17,21 +19,19 @@ function saveFunctionality (element) {
 
 function createSaveStateFunctionality () {
   if (this.handleCallbacks({ id: 'onBeforeCreateSaveStateFunctionality', params: { graph: this } })) {
-    const coloringDiv = document.getElementById(this.prefix + 'myDropdown')
 
-    const dropdown = coloringDiv.querySelector('select')
+    const dropdown = this.color_method_select.value
 
     if (dropdown.value === 'setColorByValue') {
       this.configFile.coloring_function_object.function_name = 'colorByValue'
 
-      const inputField = document.getElementById(this.prefix + 'setColorByValueInput')
+      const inputField = this.setColorByValueInput
       this.configFile.coloring_function_object.path = inputField.value
 
-      const startColor = document.getElementById(this.prefix + 'startColor')
-      this.configFile.coloring_function_object.start_color = startColor.value
+      this.configFile.coloring_function_object.start_color = this.start_color_select.value
 
-      const endColor = document.getElementById(this.prefix + 'endColor')
-      this.configFile.coloring_function_object.end_color = endColor.value
+      
+      this.configFile.coloring_function_object.end_color = this.end_color_select.value
     } else if (dropdown.value === 'setColorByProperty') {
       this.configFile.coloring_function_object.function_name = 'colorByProperty'
 
@@ -42,7 +42,7 @@ function createSaveStateFunctionality () {
       this.configFile.coloring_function_object.end_color = ''
     }
 
-    const deepSearchDropdown = document.getElementById(this.prefix + 'search_select')
+    const deepSearchDropdown = this.search_select
 
     if (deepSearchDropdown.value === 'search_node') {
       this.configFile.dataset_search_function_object.search_on = 'nodes'
@@ -52,16 +52,15 @@ function createSaveStateFunctionality () {
       this.configFile.visual_search_function_object.search_on = 'edges'
     }
 
-    const inputField = document.getElementById(this.prefix + 'input-field')
+    const inputField = this.search_input
 
     this.configFile.dataset_search_function_object.search_string = inputField.value
 
-    const inputFieldVisual = document.getElementById(this.prefix + 'search_input')
+    const inputFieldVisual = this.search_input
     this.configFile.visual_search_function_object.search_string = inputFieldVisual.value
 
-    const checkBox = document.getElementById(this.prefix + 'myCheckbox')
 
-    this.configFile.dataset_search_function_object.keep_expanded = checkBox.checked
+    this.configFile.dataset_search_function_object.keep_expanded = this.show_deep_search_expanded.checked
 
     const openPaths = []
     for (let i = 0; i < this.nodes.get().length; i++) {
@@ -118,13 +117,13 @@ function createLoadStateFunctionality () {
 }
 
 function loadStateDefault (input) {
-  document.getElementById(this.graphContainerId).innerHTML = ''
+  this.container.innerHTML = ''
 
   const reader = new FileReader()
   reader.onload = () => {
     const jsonData = JSON.parse(reader.result)
 
-    const graph /* eslint-disable-line no-unused-vars */ = new isg.Graph(jsonData.file, jsonData.config) // eslint-disable-line no-undef
+    const graph /* eslint-disable-line no-unused-vars */ = new G.Graph(this.container, jsonData.file, jsonData.config) // eslint-disable-line no-undef
 
     // document.getElementById("mynetwork").innerHTML = "";
 

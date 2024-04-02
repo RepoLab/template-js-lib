@@ -22,77 +22,73 @@ function multipleEdgesToSameNode (nodeID) {
 
 // Add Node popup
 function editNode (data, cancelAction, callback, mainObject) {
+  console.log("in editNode, this", this)
   var newNodeActive = true
-  document.getElementById('node_checkbox').addEventListener('click', function () {
-    if (document.getElementById('node_checkbox').checked) {
-      $('#node-type').removeAttr('disabled')
+  this.nodeCheckboxInput.addEventListener('click', function () {
+    if (this.nodeCheckboxInput.checked) {
+      this.nodeTypeInput.disabled = false
+      //$('#node-type').removeAttr('disabled')
     } else {
-      $('#node-type').prop('disabled', true)
+      this.nodeTypeInput.disabled = true
+      //$('#node-type').prop('disabled', true)
     }
-  })
-  document.getElementById('node-label').value = data.label
-  document.getElementById('node-saveButton').onclick = saveNodeData.bind(
-    mainObject,
+  }.bind(this))
+  this.nodeLabelInput.value = data.label
+  console.log("in edit Node, data, callback:",data, callback)
+  this.nodeSaveButton.onclick = this.saveNodeData.bind(
+    this,
     data,
     callback
   )
-  document.getElementById('node-cancelButton').onclick = cancelAction.bind(
-    mainObject,
+  this.nodeCancelButton.onclick = cancelAction.bind(
+    this,
     callback
   )
   // document.getElementById("node-popUp")
   $('canvas').on('click', function (e) {
     if (newNodeActive === true) {
-      $('#manipulation_div').css({
-        display: 'block'
-      })
-      $('#node-popUp').css({
-        top: e.pageY + 'px',
-        left: e.pageX + 'px',
-        display: 'block',
-        position: 'absolute'
-      })
+      this.manipulation_popup_div.style.display = 'block'
+
+      this.nodePopUp.style.top = e.pageY + "px"
+      this.nodePopUp.style.left = e.pageX + "px"
+      this.nodePopUp.style.display = 'block'
+      this.nodePopUp.style.position =  'absolute'     
     }
     newNodeActive = false
-  })
+  }.bind(this))
 }
 
 // addEdge popup
 function editEdgeWithoutDrag (data, callback, newThis) {
   var newEdgeActive = true
   // filling in the popup DOM elements
-  document.getElementById('edge-label').value = data.label
+  this.edgeLabelInput.value = data.label
 
-  document.getElementById('edge-saveButton').onclick = saveEdgeData.bind(
-    newThis,
+  this.edgeSaveButton.onclick = this.saveEdgeData.bind(
+    this,
     data,
     callback
   )
-  document.getElementById('edge-cancelButton').onclick = cancelEdgeEdit.bind(
-    newThis,
-    callback
-  )
+  this.edgeCancelButton.onclick = this.cancelEdgeEdit.bind(this,callback)
+
   $('canvas').on('click', function (e) {
     if (newEdgeActive === true) {
-      $('#manipulation_div').css({
-        display: 'block'
-      })
-      $('#edge-popUp').css({
-        top: e.pageY + 'px',
-        left: e.pageX + 'px',
-        display: 'block',
-        position: 'absolute'
-      })
+      this.manipulation_popup_div.style.display = 'block'
+
+      this.edgePopUp.style.top = e.pageY + "px"
+      this.edgePopUp.style.left = e.pageX + "px"
+      this.edgePopUp.style.display = 'block'
+      this.edgePopUp.style.position =  'absolute'
     }
     newEdgeActive = false
-  })
+  }.bind(this))
   // document.getElementById("edge-popUp").style.display = "block";
 }
 
 function saveEdgeData (data, callback) {
-  data.label = document.getElementById('edge-label').value
-  document.getElementById('edge-label').value = ''
-  clearEdgePopUp()
+  data.label = this.edgeLabelInput.value
+  this.edgeLabelInput.value = ''
+  this.clearEdgePopUp()
   data = addPropertyToJSON(data, this)
   console.log(this.dataFile.jsondata)
   // this.nodes.get(data.to).id = data.nodeID
@@ -328,13 +324,15 @@ function addPropertyToJSON (data, mainObject) {
 }
 
 function clearEdgePopUp () {
-  document.getElementById('edge-saveButton').onclick = null
-  document.getElementById('edge-cancelButton').onclick = null
-  document.getElementById('edge-popUp').style.display = 'none'
+  this.edgeSaveButton.onclick = null
+  this.edgeCancelButton.onclick = null
+  this.edgePopUp.style.display = 'none'
+  console.log("finished clearEdgePopUp")
 }
 
 function cancelEdgeEdit (callback) {
-  clearEdgePopUp()
+  console.log(" in cancelEdgeEdit")
+  this.clearEdgePopUp()
   callback(null)
   this.options.manipulation.enabled = !this.options.manipulation.enabled
   this.options.manipulation.initiallyActive = !this.options.manipulation.initiallyActive
@@ -343,7 +341,7 @@ function cancelEdgeEdit (callback) {
 
 function initPopUpHTML () {
   // HTML for the manipulation popups
-  var editHtml = '' +
+  /*var editHtml = '' +
                     '<div id="node-popUp" style="background-color: #fff; border: 1px solid lightgrey; padding: 0 0.75rem 0.75rem 0.5rem; border-radius: 0.375rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">' +
                     '  <div id="node-operation" style="cursor: move; font-weight: bold; margin: 0 -0.75rem 0.75rem -0.5rem; padding: 0.5rem; background: rgb(220, 236, 251)">node</div>' +
                     '  <table style="margin: auto">' +
@@ -392,15 +390,186 @@ function initPopUpHTML () {
   var editHtmlDiv = document.createElement('div')
   editHtmlDiv.style.display = 'none'
   editHtmlDiv.id = 'manipulation_div'
-  editHtmlDiv.innerHTML = editHtml
-  document.body.appendChild(editHtmlDiv)
+  editHtmlDiv.innerHTML = editHtml*/
+  //document.body.appendChild(editHtmlDiv)
+
+  // Erstelle das node-Popup
+this.nodePopUp = document.createElement('div');
+this.nodePopUp.id = "node-popUp";
+this.nodePopUp.style.backgroundColor = "#fff";
+this.nodePopUp.style.border = "1px solid lightgrey";
+this.nodePopUp.style.padding = "0 0.75rem 0.75rem 0.5rem";
+this.nodePopUp.style.borderRadius = "0.375rem";
+this.nodePopUp.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)";
+this.nodePopUp.style.display = "none"
+
+this.nodeOperation = document.createElement('div');
+this.nodeOperation.id = "node-operation";
+this.nodeOperation.style.cursor = "move";
+this.nodeOperation.style.fontWeight = "bold";
+this.nodeOperation.style.margin = "0 -0.75rem 0.75rem -0.5rem";
+this.nodeOperation.style.padding = "0.5rem";
+this.nodeOperation.style.background = "rgb(220, 236, 251)";
+this.nodeOperation.innerHTML = "node";
+this.nodePopUp.appendChild(this.nodeOperation);
+
+let nodeTable = document.createElement('table');
+nodeTable.style.margin = "auto";
+
+let nodeTableBody = document.createElement('tbody');
+let nodeTableRow1 = document.createElement('tr');
+let nodeTableLabelCell = document.createElement('td');
+nodeTableLabelCell.style.fontWeight = "bold";
+nodeTableLabelCell.style.fontSize = "13px";
+nodeTableLabelCell.innerHTML = "Label";
+nodeTableRow1.appendChild(nodeTableLabelCell);
+nodeTableBody.appendChild(nodeTableRow1);
+
+let nodeTableRow2 = document.createElement('tr');
+let nodeTableInputCell = document.createElement('td');
+this.nodeLabelInput = document.createElement('input');
+this.nodeLabelInput.id = "node-label";
+nodeTableInputCell.appendChild(this.nodeLabelInput);
+nodeTableRow2.appendChild(nodeTableInputCell);
+nodeTableBody.appendChild(nodeTableRow2);
+
+let nodeTableRow3 = document.createElement('tr');
+let nodeTableCheckboxCell = document.createElement('td');
+this.nodeCheckboxInput = document.createElement('input');
+this.nodeCheckboxInput.type = "checkbox";
+this.nodeCheckboxInput.style.margin = "8px 4px 8px 0";
+this.nodeCheckboxInput.id = "node_checkbox";
+let nodeCheckboxLabel = document.createElement('label');
+nodeCheckboxLabel.innerHTML = "Create new Wikipage";
+nodeTableCheckboxCell.appendChild(this.nodeCheckboxInput);
+nodeTableCheckboxCell.appendChild(nodeCheckboxLabel);
+nodeTableRow3.appendChild(nodeTableCheckboxCell);
+nodeTableBody.appendChild(nodeTableRow3);
+
+let nodeTableRow4 = document.createElement('tr');
+let nodeTableTypeCell = document.createElement('td');
+nodeTableTypeCell.style.fontWeight = "bold";
+nodeTableTypeCell.style.fontSize = "13px";
+nodeTableTypeCell.innerHTML = "Type";
+nodeTableRow4.appendChild(nodeTableTypeCell);
+nodeTableBody.appendChild(nodeTableRow4);
+
+let nodeTableRow5 = document.createElement('tr');
+let nodeTableTypeInputCell = document.createElement('td');
+this.nodeTypeInput  = document.createElement('input');
+this.nodeTypeInput.id = "node-type";
+nodeTableTypeInputCell.appendChild(this.nodeTypeInput);
+nodeTableRow5.appendChild(nodeTableTypeInputCell);
+nodeTableBody.appendChild(nodeTableRow5);
+
+nodeTable.appendChild(nodeTableBody);
+this.nodePopUp.appendChild(nodeTable);
+
+let nodeButtonContainer = document.createElement('div');
+nodeButtonContainer.style.display = "flex";
+nodeButtonContainer.style.justifyContent = "flex-end";
+nodeButtonContainer.style.marginTop = "1rem";
+
+this.nodeSaveButton = document.createElement('input');
+this.nodeSaveButton.type = "button";
+this.nodeSaveButton.style.backgroundColor = "#3366cc";
+this.nodeSaveButton.style.color = "#fff";
+this.nodeSaveButton.style.border = "none";
+this.nodeSaveButton.style.borderRadius = "4px";
+this.nodeSaveButton.style.padding = "0 8px 0 8px";
+this.nodeSaveButton.style.marginRight = "8px";
+this.nodeSaveButton.value = "OK";
+this.nodeSaveButton.id = "node-saveButton";
+nodeButtonContainer.appendChild(this.nodeSaveButton);
+
+this.nodeCancelButton = document.createElement('input');
+this.nodeCancelButton.type = "button";
+this.nodeCancelButton.value = "Cancel";
+this.nodeCancelButton.id = "node-cancelButton";
+nodeButtonContainer.appendChild(this.nodeCancelButton);
+
+this.nodePopUp.appendChild(nodeButtonContainer);
+
+  // Erstelle das edge-Popup
+  this.edgePopUp = document.createElement('div');
+  this.edgePopUp.id = "edge-popUp";
+  this.edgePopUp.style.backgroundColor = "#fff";
+  this.edgePopUp.style.padding = "0.5rem";
+  this.edgePopUp.style.border = "1px solid lightgrey";
+  this.edgePopUp.style.borderRadius = "12px";
+  this.edgePopUp.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)";
+  this.edgePopUp.style.display = "none"
+
+  this.edgeOperation = document.createElement('span');
+  this.edgeOperation.id = "edge-operation";
+  this.edgeOperation.style.cursor = "move";
+  this.edgeOperation.style.fontWeight = "bold";
+  this.edgeOperation.innerHTML = "edge";
+  this.edgePopUp.appendChild(this.edgeOperation);
+
+  let edgeTable = document.createElement('table');
+  edgeTable.style.margin = "auto";
+
+  let edgeTableBody = document.createElement('tbody');
+  let edgeTableRow1 = document.createElement('tr');
+  let edgeTableLabelCell = document.createElement('td');
+  edgeTableLabelCell.innerHTML = "Label";
+  edgeTableRow1.appendChild(edgeTableLabelCell);
+  edgeTableBody.appendChild(edgeTableRow1);
+
+  let edgeTableRow2 = document.createElement('tr');
+  let edgeTableInputCell = document.createElement('td');
+  this.edgeLabelInput = document.createElement('input');
+  this.edgeLabelInput.id = "edge-label";
+  edgeTableInputCell.appendChild(this.edgeLabelInput);
+  edgeTableRow2.appendChild(edgeTableInputCell);
+  edgeTableBody.appendChild(edgeTableRow2);
+
+  edgeTable.appendChild(edgeTableBody);
+  this.edgePopUp.appendChild(edgeTable);
+
+  let edgeButtonContainer = document.createElement('div');
+  edgeButtonContainer.style.display = "flex";
+  edgeButtonContainer.style.justifyContent = "flex-end";
+  edgeButtonContainer.style.marginTop = "1rem";
+
+  this.edgeSaveButton = document.createElement('input');
+  this.edgeSaveButton.type = "button";
+  this.edgeSaveButton.style.backgroundColor = "#3366cc";
+  this.edgeSaveButton.style.color = "#fff";
+  this.edgeSaveButton.style.border = "none";
+  this.edgeSaveButton.style.borderRadius = "4px";
+  this.edgeSaveButton.style.padding = "0 8px 0 8px";
+  this.edgeSaveButton.style.marginRight = "8px";
+  this.edgeSaveButton.value = "OK";
+  this.edgeSaveButton.id = "edge-saveButton";
+  edgeButtonContainer.appendChild(this.edgeSaveButton);
+
+  this.edgeCancelButton = document.createElement('input');
+  this.edgeCancelButton.type = "button";
+  this.edgeCancelButton.style.marginRight = "0.5rem";
+  this.edgeCancelButton.value = "Cancel";
+  this.edgeCancelButton.id = "edge-cancelButton";
+  edgeButtonContainer.appendChild(this.edgeCancelButton);
+
+  this.edgePopUp.appendChild(edgeButtonContainer);
+
+  // Füge die Popups zum Dokument hinzu
+
+  this.manipulation_popup_div = document.createElement('div')
+  this.manipulation_popup_div.appendChild(this.nodePopUp);
+  this.manipulation_popup_div.appendChild(this.edgePopUp);
+
+  this.manipulation_popup_div.style.display = 'none'
+  document.body.appendChild(this.manipulation_popup_div)
+  //this.container.appendChild(this.manipulation_popup_div)
 }
 
 function clearNodePopUp () {
-  document.getElementById('node-saveButton').onclick = null
-  document.getElementById('node-cancelButton').onclick = null
-  document.getElementById('node-popUp').style.display = 'none'
-  document.getElementById('node_checkbox').checked = false
+  this.nodeSaveButton.onclick = null
+  this.nodeCancelButton.onclick = null
+  this.nodePopUp.style.display = 'none'
+  this.nodeCheckboxInput.checked = false
   if (this) {
     this.options.manipulation.enabled = !this.options.manipulation.enabled
     this.options.manipulation.initiallyActive = !this.options.manipulation.initiallyActive
@@ -409,11 +578,13 @@ function clearNodePopUp () {
 }
 
 function saveNodeData (data, callback) {
-  data = addItemToJSON(data, this)
+  data = this.addItemToJSON(data, this)
 
-  document.getElementById('node-label').value = ''
-  document.getElementById('node-type').value = ''
-  clearNodePopUp()
+  this.nodeLabelInput.value = ''
+  this.nodeTypeInput.value = ''
+  this.clearNodePopUp()
+
+  console.log("in saveNodeData, data,callback: ",data,callback)
   callback(data)
 
   this.options.manipulation.enabled = !this.options.manipulation.enabled
@@ -424,15 +595,16 @@ function saveNodeData (data, callback) {
 }
 
 function addItemToJSON (data, mainObject) {
-  data.label = document.getElementById('node-label').value
+  data.label = this.nodeLabelInput.value
   data.hidden = false
   data.physics = false
+  console.log("")
 
-  if (document.getElementById('node_checkbox').checked) {
+  if (this.nodeCheckboxInput.checked) {
     let uuid = utils.uuidv4()
 
     data.id = 'jsondata/Item:' + uuid // + document.getElementById("node-label").value.replace(" ", ""); // uuid?
-    data.type = document.getElementById('node-type').value
+    data.type = this.nodeTypeInput.value
     data.path = ['jsondata', 'Item:' + uuid] // + document.getElementById("node-label").value.replace(" ", "")]
 
     mainObject.dataFile.jsondata['Item:' + uuid /* data.label.replace(' ', '') */] = {
@@ -447,15 +619,16 @@ function addItemToJSON (data, mainObject) {
 }
 
 // function to make the manipulation popups draggable
-function dragElement (elmnt) {
+function dragElement(elmnt){
   var pos1 = 0,
     pos2 = 0,
     pos3 = 0,
     pos4 = 0
-  if (document.getElementById(elmnt.id)) {
+  if (elmnt) {
     // if present, the header is where you move the DIV from:
-    document.getElementById('node-operation').onmousedown = dragMouseDown
-    document.getElementById('edge-operation').onmousedown = dragMouseDown
+    this.nodeOperation.onmousedown = dragMouseDown
+    this.edgeOperation.onmousedown = dragMouseDown
+    //elmnt.edgeOperation.onmousedown = dragMouseDown
   } else {
     // otherwise, move the DIV from anywhere inside the DIV:
     elmnt.onmousedown = dragMouseDown
@@ -493,6 +666,7 @@ function dragElement (elmnt) {
 }
 
 function setManipulationOptions (data) {
+  console.log("in set Manipulation Options", this)
   this.options.manipulation.deleteNode = function (data, callback) {
     data.edges.forEach((edge) => {
       this.edges.remove(edge)
@@ -535,9 +709,9 @@ function setManipulationOptions (data) {
 
   this.options.manipulation.addNode = function (data, callback) {
     // filling in the popup DOM elements
-    document.getElementById('node-operation').innerText = 'Add Node'
-    dragElement(document.getElementById('node-popUp'))
-    editNode(data, clearNodePopUp, callback, this)
+    this.nodeOperation.innerText = 'Add Node'
+    this.dragElement(this.nodePopUp)
+    this.editNode(data, this.clearNodePopUp, callback, this)
   }.bind(this)
 
   this.options.manipulation.addEdge = function (data, callback) {
@@ -548,9 +722,10 @@ function setManipulationOptions (data) {
         return;
       }
     }
-    document.getElementById('edge-operation').innerText = 'Add Edge'
-    dragElement(document.getElementById('edge-popUp'))
-    editEdgeWithoutDrag(data, callback, this)
+    this.edgeOperation.innerText = 'Add Edge'
+    
+    this.editEdgeWithoutDrag(data, callback, this)
+    this.dragElement(this.edgePopUp)
     // this.createLegend()
   }.bind(this)
 }
@@ -615,5 +790,11 @@ export {
   initPopUpHTML,
   saveNodeData,
   addItemToJSON,
-  deleteInJson
+  deleteInJson,
+  clearNodePopUp,
+  editEdgeWithoutDrag,
+  cancelEdgeEdit,
+  clearEdgePopUp,
+  dragElement,
+  saveEdgeData
 }

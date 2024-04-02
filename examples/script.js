@@ -336,68 +336,9 @@ let configFile =
     "name": "Config1"
   }
 
-    //const clone = structuredClone(new_json);
+    container = document.getElementById("mynetwork")
 
-    // var options = {
-    //   interaction: {
-    //     hover: true,
-    //     multiselect: true,
-    //   },
-    //   manipulation: {
-    //     enabled: true,
-    //   },
-    //   physics: {
-    //     stabilization: {
-    //       enabled: true,
-    //     },
-    //     barnesHut: {
-    //       gravitationalConstant: -40000,
-    //       centralGravity: 0,
-    //       springLength: 0,
-    //       springConstant: 0.5,
-    //       damping: 1,
-    //       avoidOverlap: 0
-    //     },
-    //     maxVelocity: 5
-    //   },
-    //   edges: {
-    //     arrows: "to",
-
-    //   },
-    //   groups: {
-    //     useDefaultGroups: false
-    //   }
-    // }
-
-    // let args = {
-    //   file: new_json,
-    //   depth: 1,
-    //   mode: true,
-    //  // nodes: nodes,
-    //  // edges: edges,
-    //   rootItem: "Item:MyProject",
-    //   recursionDepth: 1,
-    // }
-
-    // let drawer = new isg.GraphDrawer(drawer_config={lang:"en",contractArrayPaths: true}, args);
-    // let config = {
-    //  // nodes: nodes,
-    //  // edges: edges,
-    //   options: options,
-    //   file: new_json,
-    //   drawer: drawer,
-    //   configFile: configFile,
-    //  // clone: clone,
-    // };
-    // let graphtool = new isg.GraphTool("mynetwork", config);
-
-    // let graph = new isg.Graph(new_json, configFile);
-
-    // configFile.graph_container_id = "mynetwork2";
-
-    // let graph2 = new isg.Graph(new_json, configFile);
-
-    let graph = new isg.Graph.Graph(new_json, configFile);
+    let graph = new isg.Graph.Graph(container ,new_json, configFile);
 
     // configFile.graph_container_id = "mynetwork2";
 

@@ -57,9 +57,9 @@ function visOnDragStart (params) {
 
         // added node shall move with cursor until button is released
         newNode.fixed = false
-        newNode.id = config.graph.id // eslint-disable-line no-undef
+        //newNode.id = this.graph.id // eslint-disable-line no-undef
         newNode.depth = this.nodes.get(this.network.getSelectedNodes()[index]).depth + 1
-        config.graph.id += 1 // eslint-disable-line no-undef
+        //this.graph.id += 1 // eslint-disable-line no-undef
 
         this.copiedEdges = this.network.getSelectedEdges()
 
@@ -109,7 +109,7 @@ function visOnClick (params) {
 
     document.getElementById(optionsDivId).innerHTML = "<button id='" + this.prefix + "setButton'>set!</button><br><div id='" + this.prefix + "editor_div'></div>"
     // todo: implement changes
-    const setButton = document.getElementById(this.prefix + 'setButton') // eslint-disable-line no-unused-vars
+    const setButton = this.set_button//document.getElementById(this.prefix + 'setButton') // eslint-disable-line no-unused-vars
 
     const options = {
       mode: 'tree',

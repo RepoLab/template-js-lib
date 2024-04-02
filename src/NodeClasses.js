@@ -1,6 +1,8 @@
 const Plotly = require('plotly.js-dist')
 const JSONEditor = require('@json-editor/json-editor') // this is the form-only editor https://github.com/json-editor/json-editor
 const JSONEditors = require('jsoneditor/dist/jsoneditor') // this is the multi-mode editor https://github.com/josdejong/jsoneditor
+const Tabulator = require('tabulator-tables/dist/tabulator')
+
 const utils = require('./utils.js')
 const defaults = require('./defaults')
 
@@ -83,8 +85,8 @@ class BaseNode {
     else return value
   }
 
-  appendJsonToOptions = (optionsDivId = 'optionsDiv', schema = undefined) => {
-    const optionsDiv = document.getElementById(optionsDivId)
+  appendJsonToOptions = (optionsDiv = this.options_div, schema = undefined) => {
+    //const optionsDiv = document.getElementById(optionsDivId)
     const JsonDiv = document.createElement('div')
     optionsDiv.appendChild(JsonDiv)
     const setButton = document.createElement('button')
@@ -296,8 +298,8 @@ class DrawNode extends BaseNode {
     }
   }
 
-  showOptions = (optionsDivId = 'optionsDiv') => {
-    const optionsDiv = document.getElementById(optionsDivId)
+  showOptions = (optionsDiv = this.options_container) => {
+    //const optionsDiv = document.getElementById(optionsDivId)
     optionsDiv.innerHTML = `<button id="use-photo">Use Photo</button><input id="break_input" type="checkbox">break</input>
       <div id="Camera_options_div"><canvas id="canvas" width="320" height="240"></canvas></div>`
     const canvas = document.querySelector('#canvas')
@@ -360,7 +362,7 @@ class DrawNode extends BaseNode {
       this.container.nodes.update(this)
       console.log('use image', this.image)
     })
-    this.appendJsonToOptions(optionsDivId = optionsDivId)
+    this.appendJsonToOptions(optionsDiv = optionsDiv)
   }
 }
 
@@ -728,7 +730,7 @@ class JSONNode1 extends BaseNode {
   run = () => {}
   showOptions = (optionsDivId = 'optionsDiv') => {
     document.getElementById(optionsDivId).innerHTML = "<button id='setButton'>set!</button><br><div id='editor_div'></div>"
-    const setButton = document.getElementById('setButton')
+    const setButton = this.set_button
 
     // search for JsonSchema via HasType Arrow
     let schema

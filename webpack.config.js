@@ -9,4 +9,16 @@ module.exports = {
         library: ['isg'],
         libraryTarget: "umd"
     },
+    module: {   // needed to load css
+        rules: [
+          {
+            test: /\.css$/,
+            use: [
+              'style-loader',
+              'css-loader'
+            ]
+          }
+        ]
+      }
 };
+

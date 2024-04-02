@@ -21,8 +21,8 @@ const GTManipulation = require('./GraphToolManipulation.js')
 class GraphTool {
   static instanceCount = 0
 
-  constructor (divId, config, callbackConfig) {
-    if ((divId || config) === undefined) {
+  constructor (container, config, callbackConfig) {
+    if ((container || config) === undefined) {
       return
     }
 
@@ -36,8 +36,10 @@ class GraphTool {
     this.BindToClass(GTAlgorithms, this)
     this.BindToClass(GTLegend, this)
     this.BindToClass(GTLoadSave, this)
+    //this.BindToClass(GTManipulation, this)
 
-    this.graphContainerId = divId
+    this.container = container
+    this.graphContainerId = this.container.id
 
     this.prefix = 'Graph' + GraphTool.instanceCount + '_'
 
@@ -66,7 +68,8 @@ class GraphTool {
 
     this.config = utils.mergeDeep(defaultConfig, callbackConfig) // overwrite default config with user callbackConfig
 
-    this.initGraphContainers(divId)
+    console.log("before initGraphContainers")
+    this.initGraphContainers(this.container)
     this.drawer = config.drawer
 
     this.clicked = {} // object to store expanded nodes TODO: rename to expandedNodes
@@ -86,8 +89,9 @@ class GraphTool {
       edges: this.edges
     }
     this.options = config.options
-    this.options.manipulation.enabled = false
+    this.options.manipulation.enabled = false    // must be disabled such that activation can be catched for specialized node addition
     this.options.manipulation.initiallyActive = false
+    console.log("before building network:", this.vis_container)
     this.network = new vis.Network(this.vis_container, this.data, this.options)
     this.BindToClass(GTManipulation, this)
     this.setManipulationOptions(this.data)
@@ -110,8 +114,8 @@ class GraphTool {
     this.fullGraphData = {}
     this.fullGraphData.file = config.file
     this.fullGraphData.copiedConfig = copiedConfig
-
-    this.fullGraph = newInstanceOfGraphClass.createGraphByConfig(config.file, copiedConfig, true)
+    console.log("before newInstanceOfGraphClass.createGraphByConfig")
+    this.fullGraph = newInstanceOfGraphClass.createGraphByConfig(this.container, config.file, copiedConfig, true)
 
     this.BindToClass(GTColoring, this)
 
@@ -248,7 +252,7 @@ class GraphTool {
     }
 
     this.searchNodes('')
-    document.getElementById(this.prefix + 'search_input').value = ''
+    this.search_input.value = ''
 
     if (params.nodes.length > 0) {
       const node = this.nodes.get(params.nodes[0])
@@ -276,8 +280,8 @@ class GraphTool {
 
         this.createLegend()
 
-        if (document.querySelector('#' + this.prefix + 'myDropdown select').value === 'setColorByValue') {
-          this.colorByValue([document.querySelector('#' + this.prefix + 'setColorByValueInput').value], this.nodes, this.edges, document.querySelector('#' + this.prefix + 'startColor').value, document.querySelector('#' + this.prefix + 'endColor').value)
+        if (this.color_method_select.value === 'setColorByValue') {
+          this.colorByValue([this.color_method_select.value], this.nodes, this.edges, this.start_color_select.value, this.end_color_select.value)
         }
         this.clicked[params.nodes[0]] = true
 
